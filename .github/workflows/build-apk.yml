@@ -1,0 +1,35 @@
+name: Build Idea Walk APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Find the project folder
+        run: |
+          if [ -f gradlew ]; then echo "DIR=." >> $GITHUB_ENV
+          else echo "DIR=$(dirname $(find . -name gradlew -not -path './.git/*' | head -1))" >> $GITHUB_ENV; fi
+
+      - name: Build signed APK
+        run: |
+          cd "$DIR"
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/IdeaWalk.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: IdeaWalk-apk
+          path: IdeaWalk.apk
