@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Idea Walk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Familjen+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F2; --bg-tint:#E3EEE6; --panel:#FFFFFF; --sunk:#EEF2EE; --ink:#131A16; --ink2:#4B5850; --ink3:#86928A; --line:#E2E8E3;
+  --moss:#2C6A44; --moss-2:#3F8A5B; --moss-ink:#FFFFFF; --moss-soft:#E1EEE5;
+  --gold:#C8890A; --gold-soft:#FCF1D8; --rec:#D2453A; --rec-soft:rgba(210,69,58,.16);
+  --shadow:0 1px 2px rgba(19,26,22,.05),0 6px 20px rgba(19,26,22,.06);
+  --shadow-lg:0 10px 30px rgba(19,26,22,.12);
+  --glass:rgba(255,255,255,.78);
+  --display:"Familjen Grotesk",ui-sans-serif,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#0D1210;--bg-tint:#12211A;--panel:#161D19;--sunk:#1C2520;--ink:#E7EEE9;--ink2:#A7B5AC;--ink3:#6E7C73;--line:#25302A;
+  --moss:#7FCB98;--moss-2:#5DB27C;--moss-ink:#0B120E;--moss-soft:#1B3024;--gold:#F2BC4E;--gold-soft:#33280F;--rec:#F2786C;--rec-soft:rgba(242,120,108,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);--shadow-lg:0 10px 30px rgba(0,0,0,.45);--glass:rgba(22,29,25,.8);}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0D1210;--bg-tint:#12211A;--panel:#161D19;--sunk:#1C2520;--ink:#E7EEE9;--ink2:#A7B5AC;--ink3:#6E7C73;--line:#25302A;
+  --moss:#7FCB98;--moss-2:#5DB27C;--moss-ink:#0B120E;--moss-soft:#1B3024;--gold:#F2BC4E;--gold-soft:#33280F;--rec:#F2786C;--rec-soft:rgba(242,120,108,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);--shadow-lg:0 10px 30px rgba(0,0,0,.45);--glass:rgba(22,29,25,.8);}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:linear-gradient(180deg,var(--bg-tint) 0,var(--bg) 320px) var(--bg);background-repeat:no-repeat;color:var(--ink);
+  font:16px/1.55 var(--body);padding:env(safe-area-inset-top,0px) 18px calc(110px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:20px;padding-block:22px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.eyebrow{font:700 12px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--moss)}
+h1{font:700 32px/1.05 var(--display);margin:6px 0 0;letter-spacing:-.02em}
+h2{font:700 20px/1.2 var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.muted{color:var(--ink3)}
+.stat{font:500 12.5px var(--mono);color:var(--ink3);font-variant-numeric:tabular-nums}
+#topStat{background:var(--glass);padding:6px 10px;border-radius:999px;box-shadow:var(--shadow);white-space:nowrap}
+.label{font:700 11.5px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+button{font-family:var(--body);cursor:pointer;transition:transform .12s ease,background-color .2s ease,color .2s ease}
+button:active{transform:scale(.97)}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+.btn{border:0;background:var(--sunk);color:var(--ink);border-radius:999px;padding:11px 18px;font-size:15px;font-weight:700}
+.btn.primary{background:var(--moss);color:var(--moss-ink);box-shadow:0 6px 16px color-mix(in srgb,var(--moss) 30%,transparent)}
+.btn.ghost{background:transparent;color:var(--ink2)}
+.btn.small{padding:7px 13px;font-size:13.5px}
+.btn:disabled{opacity:.55;cursor:default;transform:none}
+
+/* record */
+.capture{display:flex;flex-direction:column;gap:16px}
+.hero{display:flex;flex-direction:column;align-items:center;gap:10px;padding:26px 0 8px;text-align:center}
+.micwrap{position:relative;width:132px;height:132px;display:grid;place-items:center}
+.micwrap::before,.micwrap::after{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--moss-soft);transition:background .3s}
+.micwrap::after{inset:0;opacity:.5}
+.recording .micwrap::before,.recording .micwrap::after{background:var(--rec-soft)}
+.recording .micwrap::before{animation:ring 1.8s ease-out infinite}
+.recording .micwrap::after{animation:ring 1.8s .6s ease-out infinite}
+@keyframes ring{0%{transform:scale(.85);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+.mic{position:relative;z-index:1;width:92px;height:92px;border-radius:50%;border:0;background:linear-gradient(160deg,var(--moss-2),var(--moss));color:var(--moss-ink);display:grid;place-items:center;box-shadow:0 10px 24px color-mix(in srgb,var(--moss) 40%,transparent)}
+.mic svg{width:36px;height:36px}
+.mic .stop{display:none;width:28px;height:28px;border-radius:7px;background:currentColor}
+.mic.on{background:var(--rec);box-shadow:0 10px 24px color-mix(in srgb,var(--rec) 40%,transparent)}
+.mic.on svg{display:none} .mic.on .stop{display:block}
+@media (prefers-reduced-motion:reduce){.recording .micwrap::before,.recording .micwrap::after{animation:none}}
+.clock{font:500 34px/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.hint{font-size:14.5px;color:var(--ink2);max-width:30ch}
+.sheet{background:var(--panel);border-radius:22px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:12px}
+textarea#tx{width:100%;min-height:170px;border:0;background:transparent;color:var(--ink);padding:4px 2px;font:17px/1.65 var(--body);resize:none;outline:none}
+textarea#tx::placeholder{color:var(--ink3)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.acts .spacer{flex:1}
+#procBtn{width:100%;padding:15px 18px;font-size:16px}
+.tip{font-size:14px;color:var(--ink2);background:var(--gold-soft);border-radius:16px;padding:12px 14px}
+.tip b{color:var(--ink)}
+.result{display:flex;flex-direction:column;gap:12px;padding-top:6px}
+
+/* ideas */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.seg{display:flex;background:var(--sunk);border-radius:999px;padding:4px;gap:2px}
+.seg button{border:0;background:transparent;color:var(--ink2);padding:8px 15px;border-radius:999px;font-size:14px;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:2px 18px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:0;background:var(--panel);box-shadow:var(--shadow);color:var(--ink2);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.group{display:flex;flex-direction:column;gap:10px}
+.group h3{font:700 16px var(--display);margin:10px 2px 0;display:flex;gap:8px;align-items:baseline}
+.idea{background:var(--panel);border-radius:20px;box-shadow:var(--shadow);padding:16px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;position:relative}
+.idea.best{background:linear-gradient(180deg,color-mix(in srgb,var(--gold-soft) 55%,var(--panel)),var(--panel) 70%)}
+.idea.done{opacity:.5}
+.score{grid-row:1/4;width:40px;height:40px;border-radius:12px;background:var(--sunk);display:grid;place-items:center;align-self:start}
+.score .n{font:500 18px var(--mono);line-height:1;color:var(--ink2)}
+.best .score{background:var(--gold);}
+.best .score .n{color:#fff}
+.pips{display:none}
+.idea h4{margin:0;font:700 17px/1.3 var(--body);letter-spacing:-.005em}
+.idea p{margin:0;color:var(--ink2);font-size:15px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--ink3)}
+.tag{font-size:12px;font-weight:700;background:var(--moss-soft);color:var(--moss);padding:3px 9px;border-radius:999px}
+.tag.ex{background:var(--sunk);color:var(--ink3)}
+.next{font-size:14px;color:var(--ink);background:var(--sunk);border-radius:12px;padding:8px 10px;margin-top:4px}
+.next b{color:var(--moss)}
+.ia{grid-column:2;display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;margin-left:-8px}
+.ia .btn{background:transparent;color:var(--ink2);padding:6px 10px}
+.star[aria-pressed="true"]{color:var(--gold)!important}
+.empty{text-align:center;color:var(--ink3);padding:48px 12px}
+
+/* walks */
+.walk{background:var(--panel);border-radius:20px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:8px}
+.walk details summary{cursor:pointer;color:var(--ink2);font-size:14px;font-weight:700;list-style:none}
+.walk details summary::before{content:"▸ ";color:var(--ink3)}
+.walk details[open] summary::before{content:"▾ "}
+.walk .t{white-space:pre-wrap;font-size:14.5px;color:var(--ink2);margin-top:8px;background:var(--sunk);border-radius:12px;padding:10px 12px}
+
+/* settings */
+.settings{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--panel);border-radius:20px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:12px}
+.card h2{font-size:18px}
+.card p{font-size:14.5px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:700;font-size:14px}
+.field small{color:var(--ink3);font-size:13px}
+.field input,.field textarea{border:0;border-radius:14px;background:var(--sunk);color:var(--ink);padding:12px 14px;font:15px var(--body);width:100%}
+.field textarea{min-height:90px;font:13px var(--mono)}
+.ok{color:var(--moss);font-weight:700;font-size:14px}
+.warn{color:var(--rec);font-weight:700;font-size:14px}
+.banner{background:var(--panel);box-shadow:var(--shadow);border-radius:18px;padding:12px 12px 12px 16px;font-size:14.5px;display:flex;gap:10px;align-items:center}
+.banner span{flex:1}
+
+/* floating nav */
+nav.tabs{position:fixed;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:480px;margin:0 auto;
+  background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
+  border-radius:26px;box-shadow:var(--shadow-lg);padding:7px;display:flex;gap:4px;z-index:3}
+nav.tabs button{flex:1;border:0;background:transparent;color:var(--ink3);padding:8px 4px;border-radius:20px;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button[aria-selected="true"]{color:var(--moss);background:var(--moss-soft)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(100px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:999px;font-size:14.5px;max-width:calc(100% - 36px);z-index:4;box-shadow:var(--shadow-lg)}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:4px}
+@keyframes sp{to{transform:rotate(360deg)}}
+section{animation:fade .25s ease}
+@keyframes fade{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){section{animation:none}}
+</style>
+
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div><div class="eyebrow" id="greet">Idea Walk</div><h1>Idea Walk</h1></div>
+    <span class="stat" id="topStat"></span>
+  </header>
+
+  <!-- RECORD -->
+  <section id="vCapture">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="banner" id="keyBanner" hidden><span>Add your Claude API key once so the app can pull out your ideas.</span><button class="btn small primary" onclick="goTab('Settings')">Add key</button></div>
+      <div class="capture" id="capture">
+        <div class="hero">
+          <div class="micwrap">
+            <button class="mic" id="mic" aria-label="Start recording">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+              <span class="stop"></span>
+            </button>
+          </div>
+          <span class="clock" id="clock">0:00</span>
+          <span class="hint" id="recHint">Tap and start talking. Rambling is fine.</span>
+        </div>
+        <div class="tip" id="dictTip" hidden></div>
+        <div class="sheet">
+          <textarea id="tx" placeholder="Your words appear here as you talk. You can also type or use your keyboard's mic."></textarea>
+          <div class="acts">
+            <span class="stat" id="wc">0 words</span>
+            <span class="spacer"></span>
+            <button class="btn ghost small" id="clearBtn">Clear</button>
+          </div>
+          <button class="btn primary" id="procBtn">Pull out my ideas</button>
+        </div>
+        <div class="result" id="result" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IDEAS -->
+  <section id="vIdeas" hidden>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="toolbar">
+        <div class="seg" role="group" aria-label="Arrange ideas">
+          <button data-view="best" aria-pressed="true">Best first</button>
+          <button data-view="theme" aria-pressed="false">By theme</button>
+        </div>
+        <label class="stat" style="display:flex;gap:6px;align-items:center;margin-left:auto"><input type="checkbox" id="showDone"> Show done</label>
+      </div>
+      <div class="chips" id="cats"></div>
+      <div id="ideaList" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+  </section>
+
+  <!-- WALKS -->
+  <section id="vWalks" hidden>
+    <div id="walkList" style="display:flex;flex-direction:column;gap:10px"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="vSettings" hidden>
+    <div class="settings">
+      <div class="card">
+        <h2>Claude API key</h2>
+        <p class="muted" style="margin:0">Get one at console.anthropic.com under API keys. It's stored only in this app on your phone and is sent only to Anthropic.</p>
+        <div class="field"><label for="apiKey">API key</label><input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-…"></div>
+        <div class="field"><label for="model">Model</label><input id="model" autocomplete="off"><small>claude-sonnet-5 is a good balance. claude-haiku-4-5-20251001 is cheaper and faster.</small></div>
+        <div class="acts"><span id="keyState"></span><span class="spacer"></span><button class="btn primary" id="saveKey">Save</button></div>
+      </div>
+      <div class="card">
+        <h2>Backup</h2>
+        <p class="muted" style="margin:0">Your walks and ideas live only on this phone. Uninstalling the app or clearing its storage deletes them, so share a backup to Drive or email now and then.</p>
+        <div class="acts"><button class="btn" id="shareBackup">Share backup</button></div>
+        <div class="field"><label for="restoreTx">Restore from a backup</label><textarea id="restoreTx" placeholder="Paste backup text here"></textarea></div>
+        <div class="acts"><span id="restoreState"></span><span class="spacer"></span><button class="btn" id="restoreBtn">Restore</button></div>
+      </div>
+      <div class="card">
+        <h2>Delete everything</h2>
+        <div class="acts"><button class="btn" id="wipeBtn" style="color:var(--rec)">Delete all walks and ideas</button><button class="btn primary" id="wipeYes" hidden style="background:var(--rec);border-color:var(--rec)">Yes, delete</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="Capture" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Record</button>
+  <button role="tab" data-tab="Ideas" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>Ideas</button>
+  <button role="tab" data-tab="Walks" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="13" cy="4" r="2"/><path d="M10 21l2-6 3 3v3M8 12l2-4 4 1 2 3 3 1M12 15l-1-6"/></svg>Walks</button>
+  <button role="tab" data-tab="Settings" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Settings</button>
+</nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,3800);}
+const fmtDate=ts=>new Date(ts).toLocaleDateString([], {weekday:"short",day:"numeric",month:"short"})+" · "+new Date(ts).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+const mmss=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+const N=window.Android||null;   // native bridge (absent when opened in a normal browser)
+
+/* ---------- local data (this phone only) ---------- */
+const STORE="iw-data-v1";
+let data={walks:[],ideas:[]};
+function load(){
+  try{
+    const raw=localStorage.getItem(STORE);
+    if(raw){data=JSON.parse(raw);return;}
+  }catch(_){}
+  data=seed(); save();
+}
+function save(){ try{localStorage.setItem(STORE,JSON.stringify(data));}catch(e){toast("Couldn't save on this phone: "+e.message);} render(); }
+function seed(){
+  const ts=Date.now()-3600e3;
+  return {walks:[{id:"example-walk",example:true,ts,durationSec:412,title:"Onboarding and a side project",summary:"Thinking out loud about faster merchant onboarding and a weekend writing habit.",processed:true,ideaCount:3,
+    transcript:"Okay so, um, walking back from lunch. The thing that keeps bugging me is merchant onboarding takes like four days and most of it is people waiting on document checks. What if we pre-filled the KYC form from the GST number, that alone could cut a day. Also, uh, I keep saying I'll write more. Maybe one short post every Sunday about something I learned that week, nothing fancy. Oh and the standup, it's too long, we could just do async updates on Tuesdays and Thursdays."}],
+   ideas:[
+    {id:"example-walk-0",example:true,walkId:"example-walk",ts:ts+2,title:"Pre-fill merchant KYC from the GST number",detail:"Most onboarding time is spent waiting on document checks. Pulling business details from the GST number could remove a day from the four-day process.",category:"Work",score:5,why:"Clear bottleneck with a measurable win",next:"Check which KYC fields the GST lookup can fill reliably",starred:false,status:"open"},
+    {id:"example-walk-1",example:true,walkId:"example-walk",ts:ts+1,title:"One short post every Sunday",detail:"Write one short post a week about something learned that week, keeping the bar low so it sticks.",category:"Writing",score:3,why:"Small, repeatable habit",next:"Start a running list of this week's learnings",starred:false,status:"open"},
+    {id:"example-walk-2",example:true,walkId:"example-walk",ts:ts,title:"Async standups twice a week",detail:"Replace live standup with written updates on Tuesdays and Thursdays.",category:"Work",score:2,why:"Easy to trial, modest impact",next:"Propose a two-week trial to the team",starred:false,status:"open"}]};
+}
+
+/* ---------- native events ---------- */
+const pending=new Map();
+window.onNative=ev=>{
+  switch(ev.type){
+    case "speech_partial": partial=ev.text||""; showTranscript(); break;
+    case "speech_final": finals+=(finals&&!/\s$/.test(finals)?" ":"")+ev.text.trim()+" "; partial=""; showTranscript(); break;
+    case "speech_state": setRecording(!!ev.on); break;
+    case "speech_error": toast(ev.message); showTip(ev.message); break;
+    case "claude": { const p=pending.get(ev.id); if(p){pending.delete(ev.id); ev.ok?p.resolve(ev.text):p.reject(new Error(ev.error));} break; }
+  }
+};
+function askClaude(prompt){
+  return new Promise((resolve,reject)=>{
+    if(!N) return reject(new Error("Open this inside the Idea Walk app to use Claude."));
+    const id="q"+Date.now()+Math.random().toString(36).slice(2,6);
+    pending.set(id,{resolve,reject});
+    N.askClaude(prompt,id);
+  });
+}
+function parseJson(text){
+  try{return JSON.parse(text);}catch(_){}
+  const m=text.match(/```(?:json)?\s*([\s\S]*?)```/); if(m){try{return JSON.parse(m[1]);}catch(_){}}
+  const a=text.indexOf("{"), b=text.lastIndexOf("}");
+  if(a>=0&&b>a){try{return JSON.parse(text.slice(a,b+1));}catch(_){}}
+  return null;
+}
+
+/* ---------- tabs ---------- */
+let curTab="Capture";
+document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)goTab(b.dataset.tab);});
+function goTab(t){
+  curTab=t;
+  for(const x of document.querySelectorAll("nav.tabs button"))x.setAttribute("aria-selected",x.dataset.tab===t);
+  for(const v of ["Capture","Ideas","Walks","Settings"])$("v"+v).hidden=(v!==t);
+  if(t==="Settings")fillSettings();
+  window.scrollTo(0,0);
+}
+window.onBack=()=>{ if(curTab!=="Capture"){goTab("Capture");return true;} return false; };
+
+/* ---------- recording ---------- */
+let recording=false, startTs=0, clockId=null, elapsed=0, base="", finals="", partial="";
+function showTranscript(){ $("tx").value=(base+finals+partial).replace(/\s+$/,partial?"":" "); updWc(); saveDraft(); $("tx").scrollTop=1e9; }
+function setRecording(on){
+  if(on&&!recording){ recording=true; startTs=Date.now(); clockId=setInterval(tick,500); }
+  if(!on&&recording){ recording=false; elapsed+=(Date.now()-startTs)/1000; clearInterval(clockId); partial=""; showTranscript(); }
+  tick();
+  $("mic").classList.toggle("on",recording);
+  $("capture").classList.toggle("recording",recording);
+  $("mic").setAttribute("aria-label",recording?"Stop recording":"Start recording");
+  $("recHint").textContent=recording?"Listening. The screen stays on while you talk.":"Tap and start talking. Rambling is fine.";
+}
+(function(){const h=new Date().getHours();const el=document.getElementById("greet");if(el)el.textContent=new Date().toLocaleDateString([], {weekday:"long",day:"numeric",month:"short"});})();
+function tick(){ $("clock").textContent=mmss(elapsed+(recording?(Date.now()-startTs)/1000:0)); }
+function showTip(msg){ const t=$("dictTip"); t.innerHTML="<b>"+esc(msg)+"</b> You can still tap the box below and use the mic on your keyboard."; t.hidden=false; }
+$("mic").onclick=()=>{
+  if(!N){ showTip("Recording works inside the Idea Walk app."); return; }
+  if(recording){ N.stopListening(); return; }
+  $("dictTip").hidden=true;
+  base=$("tx").value.trim(); if(base) base+=" ";
+  finals=""; partial="";
+  N.startListening();
+};
+function updWc(){ const n=($("tx").value.match(/\S+/g)||[]).length; $("wc").textContent=n+" word"+(n===1?"":"s"); }
+function saveDraft(){ try{localStorage.setItem("iw-draft",$("tx").value);}catch(_){} }
+$("tx").addEventListener("input",()=>{ if(!recording){base=$("tx").value;finals="";partial="";} updWc(); saveDraft(); });
+$("clearBtn").onclick=()=>{ if(recording&&N)N.stopListening(); base=finals=partial=""; $("tx").value=""; elapsed=0; tick(); updWc(); saveDraft(); $("result").hidden=true; };
+
+/* ---------- processing ---------- */
+function prompt(transcript){
+  const themes=[...new Set(data.ideas.filter(i=>!i.example).map(i=>i.category))].slice(0,20);
+  return `You are helping someone who records voice notes while walking. Below is a raw, rambling transcript (speech-to-text; expect filler words, false starts and mis-heard words).
+
+Your job:
+1. Find every distinct IDEA (a possibility, plan, insight, question worth pursuing or thing to make/do). Merge repeats. Ignore filler and small talk.
+2. Rewrite each idea clearly in the speaker's own voice, keeping their specifics.
+3. Score each 1-5 on how promising it is (originality, usefulness, how much energy the speaker put into it). Be discerning: most ideas are 2-3, only standouts are 5.
+4. Give each a short theme (1-2 words, e.g. "Work", "Product", "Writing", "Health", "Personal", "Learning").${themes.length?` Reuse these existing themes where they fit: ${JSON.stringify(themes)}.`:""}
+5. Suggest one concrete next step per idea.
+
+Reply with only JSON in this shape, no other text:
+{"title": "3-6 word title for this walk",
+ "summary": "one sentence on what the walk was about",
+ "ideas": [{"title": "short headline", "detail": "1-2 sentences", "category": "Theme", "score": 4, "why": "why it's promising, one short clause", "next": "one concrete next step"}]}
+
+If there are no real ideas, return "ideas": [].
+
+TRANSCRIPT:
+"""${transcript}"""`;
+}
+async function processText(t, existingWalkId){
+  const btn=$("procBtn"); btn.disabled=true; btn.innerHTML='<span class="spin"></span> Reading your walk…';
+  const walkId=existingWalkId||("w"+Date.now().toString(36));
+  let walk=data.walks.find(w=>w.id===walkId);
+  if(!walk){ walk={id:walkId,ts:Date.now(),durationSec:Math.round(elapsed),transcript:t,title:"Untitled walk",summary:"",ideaCount:0,processed:false}; data.walks.push(walk); save(); }
+  let out=null, errMsg="";
+  try{
+    const text=await askClaude(prompt(t));
+    out=parseJson(text);
+    if(!out||!Array.isArray(out.ideas)) throw new Error("Claude's answer couldn't be read. Try again from Walks.");
+  }catch(e){ errMsg=e.message+" Your transcript is saved under Walks."; }
+  btn.disabled=false; btn.textContent="Pull out my ideas";
+  const r=$("result"); r.hidden=false;
+  if(!out){ r.innerHTML=`<p class="warn" style="margin:0">${esc(errMsg)}</p>`; return false; }
+  walk.title=String(out.title||walk.title).slice(0,80); walk.summary=String(out.summary||""); walk.processed=true; walk.ideaCount=out.ideas.length;
+  const fresh=out.ideas.map((x,i)=>({id:walkId+"-"+i,walkId,ts:walk.ts+i,title:String(x.title||"").slice(0,140),detail:String(x.detail||""),
+    category:String(x.category||"General").slice(0,24),score:Math.max(1,Math.min(5,Math.round(+x.score||3))),why:String(x.why||""),next:String(x.next||""),starred:false,status:"open"}));
+  data.ideas=data.ideas.filter(i=>i.walkId!==walkId).concat(fresh);
+  save();
+  fresh.sort((a,b)=>b.score-a.score);
+  r.innerHTML=`<div><span class="label">From this walk</span><h2>${esc(walk.title)}</h2><p class="muted" style="margin:4px 0 0">${esc(walk.summary)}</p></div>`+
+    (fresh.length?fresh.map(ideaCard).join(""):`<p class="muted">No clear ideas in this one. The transcript is saved under Walks.</p>`)+
+    `<div class="acts"><button class="btn" onclick="goTab('Ideas')">See all ideas</button></div>`;
+  return true;
+}
+$("procBtn").onclick=async()=>{
+  if(recording&&N){ N.stopListening(); await new Promise(r=>setTimeout(r,1200)); }
+  const t=$("tx").value.trim();
+  if((t.match(/\S+/g)||[]).length<5){ toast("Say a bit more first."); return; }
+  if(N&&!N.hasApiKey()){ toast("Add your Claude API key in Settings first."); goTab("Settings"); return; }
+  const ok=await processText(t);
+  // The transcript is safely stored as a walk either way, so clear the box.
+  base=finals=partial=""; $("tx").value=""; elapsed=0; tick(); updWc(); saveDraft();
+  if(!ok) return;
+};
+async function reprocess(walkId){
+  const w=data.walks.find(x=>x.id===walkId); if(!w)return;
+  if(N&&!N.hasApiKey()){ goTab("Settings"); toast("Add your Claude API key first."); return; }
+  goTab("Capture"); await processText(w.transcript,walkId);
+}
+
+/* ---------- render ---------- */
+let view="best", cat="All";
+function pips(n){return `<div class="pips" aria-hidden="true">${[5,4,3,2,1].map(k=>`<i class="${k<=n?"f":""}"></i>`).join("")}</div>`;}
+function ideaCard(i){
+  const best=i.score>=4||i.starred;
+  return `<article class="idea ${best?"best":""} ${i.status==="done"?"done":""}">
+    <div class="score"><span class="n">${i.score}</span>${pips(i.score)}</div>
+    <h4>${esc(i.title)}</h4>
+    <p>${esc(i.detail)}</p>
+    <div class="meta"><span class="tag">${esc(i.category)}</span>${i.example?'<span class="tag ex">Example</span>':""}${i.why?`<span>${esc(i.why)}</span>`:""}</div>
+    ${i.next?`<div class="next" style="grid-column:2"><b>Next:</b> ${esc(i.next)}</div>`:""}
+    <div class="ia">
+      <button class="btn small star" data-star="${i.id}" aria-pressed="${!!i.starred}">${i.starred?"★ Starred":"☆ Star"}</button>
+      <button class="btn small" data-done="${i.id}">${i.status==="done"?"Reopen":"Mark done"}</button>
+      <button class="btn small ghost" data-share="${i.id}">Share</button>
+    </div>
+  </article>`;
+}
+function render(){
+  const ideas=data.ideas, walks=data.walks;
+  const open=ideas.filter(i=>i.status!=="done");
+  $("topStat").textContent=`${open.length} idea${open.length===1?"":"s"} · ${walks.length} walk${walks.length===1?"":"s"}`;
+  const cats=["All",...[...new Set(ideas.map(i=>i.category))].sort()];
+  if(!cats.includes(cat))cat="All";
+  $("cats").innerHTML=cats.length>2?cats.map(c=>`<button class="chip" data-cat="${esc(c)}" aria-pressed="${c===cat}">${esc(c)}</button>`).join(""):"";
+  const list=ideas.filter(i=>($("showDone").checked||i.status!=="done")&&(cat==="All"||i.category===cat));
+  const rank=(a,b)=>(b.starred-a.starred)||(b.score-a.score)||(b.ts-a.ts);
+  if(!list.length) $("ideaList").innerHTML=`<div class="empty">No ideas yet. Go for a walk, tap record, and talk.</div>`;
+  else if(view==="best") $("ideaList").innerHTML=list.slice().sort(rank).map(ideaCard).join("");
+  else {
+    const g={}; list.forEach(i=>(g[i.category]??=[]).push(i));
+    $("ideaList").innerHTML=Object.entries(g).sort((a,b)=>b[1].length-a[1].length).map(([k,v])=>
+      `<div class="group"><h3>${esc(k)} <span class="stat">${v.length}</span></h3>${v.sort(rank).map(ideaCard).join("")}</div>`).join("");
+  }
+  const ws=walks.slice().sort((a,b)=>b.ts-a.ts);
+  $("walkList").innerHTML=ws.length?ws.map(w=>`<article class="walk">
+    <div class="meta"><span>${fmtDate(w.ts)}</span>${w.durationSec?`<span>· ${mmss(w.durationSec)}</span>`:""}${w.example?'<span class="tag ex">Example</span>':""}</div>
+    <h2>${esc(w.title)}</h2>
+    ${w.summary?`<p class="muted" style="margin:0">${esc(w.summary)}</p>`:""}
+    <div class="meta">${w.processed?`<span class="tag">${w.ideaCount} idea${w.ideaCount===1?"":"s"}</span>`:""}<button class="btn small ${w.processed?"ghost":"primary"}" data-re="${w.id}">${w.processed?"Redo ideas":"Pull out ideas"}</button><button class="btn small ghost" data-delw="${w.id}">Delete</button></div>
+    <details><summary>Transcript</summary><div class="t">${esc(w.transcript)}</div></details>
+  </article>`).join(""):`<div class="empty">Your walks will show up here.</div>`;
+  $("keyBanner").hidden=!N||N.hasApiKey();
+}
+$("ideaList").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const find=id=>data.ideas.find(x=>x.id===id);
+  if(b.dataset.star){const i=find(b.dataset.star);i.starred=!i.starred;save();}
+  if(b.dataset.done){const i=find(b.dataset.done);i.status=i.status==="done"?"open":"done";save();}
+  if(b.dataset.share){const i=find(b.dataset.share);const t=`${i.title}\n\n${i.detail}\n\nNext: ${i.next}`;N?N.share(t):toast("Sharing works inside the app.");}
+});
+$("result").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-star],button[data-done],button[data-share]");if(!b)return;
+  const i=data.ideas.find(x=>x.id===(b.dataset.star||b.dataset.done||b.dataset.share));if(!i)return;
+  if(b.dataset.share){N?N.share(`${i.title}\n\n${i.detail}\n\nNext: ${i.next}`):toast("Sharing works inside the app.");return;}
+  if(b.dataset.star){i.starred=!i.starred;b.textContent=i.starred?"★ Starred":"☆ Star";b.setAttribute("aria-pressed",i.starred);}
+  if(b.dataset.done){i.status=i.status==="done"?"open":"done";b.textContent=i.status==="done"?"Reopen":"Mark done";}
+  save();
+});
+let delArm=null;
+$("walkList").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.re){reprocess(b.dataset.re);return;}
+  if(b.dataset.delw){
+    if(delArm!==b.dataset.delw){delArm=b.dataset.delw;b.textContent="Tap again to delete";setTimeout(()=>{if(delArm===b.dataset.delw){delArm=null;b.textContent="Delete";}},3000);return;}
+    const id=b.dataset.delw; delArm=null;
+    data.walks=data.walks.filter(w=>w.id!==id); data.ideas=data.ideas.filter(i=>i.walkId!==id); save(); toast("Walk deleted");
+  }
+});
+$("cats").addEventListener("click",e=>{const b=e.target.closest("button[data-cat]");if(b){cat=b.dataset.cat;render();}});
+document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;view=b.dataset.view;for(const x of document.querySelectorAll(".seg button"))x.setAttribute("aria-pressed",x===b);render();});
+$("showDone").onchange=render;
+
+/* ---------- settings ---------- */
+function fillSettings(){
+  $("apiKey").value="";
+  $("model").value=N?N.getModel():"";
+  $("keyState").innerHTML=N&&N.hasApiKey()?'<span class="ok">Key saved</span>':'<span class="warn">No key yet</span>';
+}
+$("saveKey").onclick=()=>{
+  if(!N){toast("Settings work inside the app.");return;}
+  const k=$("apiKey").value.trim();
+  if(k){ if(!k.startsWith("sk-ant-")){ $("keyState").innerHTML='<span class="warn">That doesn\'t look like a Claude key (they start with sk-ant-).</span>'; return; } N.setApiKey(k); }
+  N.setModel($("model").value);
+  fillSettings(); render(); toast("Saved");
+};
+$("shareBackup").onclick=()=>{ const t=JSON.stringify({app:"idea-walk",v:1,exported:new Date().toISOString(),...data}); N?N.share(t):toast("Sharing works inside the app."); };
+$("restoreBtn").onclick=()=>{
+  const d=parseJson($("restoreTx").value.trim());
+  if(!d||!Array.isArray(d.walks)||!Array.isArray(d.ideas)){ $("restoreState").innerHTML='<span class="warn">That isn\'t an Idea Walk backup.</span>'; return; }
+  const wIds=new Set(data.walks.map(w=>w.id)), iIds=new Set(data.ideas.map(i=>i.id));
+  const nw=d.walks.filter(w=>!wIds.has(w.id)), ni=d.ideas.filter(i=>!iIds.has(i.id));
+  data.walks.push(...nw); data.ideas.push(...ni); save();
+  $("restoreTx").value=""; $("restoreState").innerHTML=`<span class="ok">Added ${nw.length} walks and ${ni.length} ideas.</span>`;
+};
+$("wipeBtn").onclick=()=>{ $("wipeYes").hidden=false; setTimeout(()=>$("wipeYes").hidden=true,5000); };
+$("wipeYes").onclick=()=>{ data={walks:[],ideas:[]}; save(); $("wipeYes").hidden=true; toast("Everything deleted"); };
+
+/* ---------- boot ---------- */
+load();
+try{ const d=localStorage.getItem("iw-draft"); if(d){$("tx").value=d; base=d;} }catch(_){}
+updWc(); render();
+if(!N) showTip("You're viewing this in a normal browser, so recording and Claude are off.");
+
+</script>
+</body>
+</html>
